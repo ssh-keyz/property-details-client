@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,14 +7,66 @@ import { MapPin, Home, School, DollarSign, Calendar } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
-// Access environment variable from Next.js config
+// Access environment variables from Next.js config
 const API_URL = typeof window !== 'undefined' ? window.ENV?.NEXT_PUBLIC_API_URL || 'http://localhost:8080' : 'http://localhost:8080';
+// Safely access Google Maps API key from window.ENV
+const GOOGLE_MAPS_API_KEY = typeof window !== 'undefined' ? window.ENV?.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY : undefined;
 
 const PropertyView = () => {
   const [address, setAddress] = useState('1600 Amphitheatre Parkway, Mountain View, CA 94043');
+  const [suggestions, setSuggestions] = useState([]);
   const [propertyData, setPropertyData] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showExamples, setShowExamples] = useState(false);
+  const autocompleteRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const exampleAddresses = [
+    "2510 Bancroft Way, Berkeley, CA 94704",
+    "123 Main Street, Los Angeles, CA 90012",
+    "555 Market Street, San Francisco, CA 94105"
+  ];
+
+  useEffect(() => {
+    // Only load Google Maps if API key is available
+    if (GOOGLE_MAPS_API_KEY) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.onload = initAutocomplete;
+      document.head.appendChild(script);
+
+      return () => {
+        // Cleanup script on component unmount
+        document.head.removeChild(script);
+      };
+    }
+  }, []);
+
+  const initAutocomplete = () => {
+    if (!inputRef.current || !window.google) return;
+
+    try {
+      autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
+        types: ['address'],
+        componentRestrictions: { country: 'us' },
+        fields: ['formatted_address', 'geometry', 'name'],
+      });
+
+      autocompleteRef.current.addListener('place_changed', () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place.formatted_address) {
+          setAddress(place.formatted_address);
+          setSuggestions([]);
+          handleSearch(place.formatted_address);
+        }
+      });
+    } catch (error) {
+      console.warn('Google Places Autocomplete initialization failed:', error);
+    }
+  };
 
   const getLoadingMessage = (progress) => {
     if (progress < 20) return "Scanning the neighborhood... 🏘️";
@@ -25,9 +77,45 @@ const PropertyView = () => {
     return "Almost there! Just measuring the sidewalks... 📏";
   };
 
-  const handleSearch = async () => {
-    if (!address.trim()) {
+  const validateAddress = (address) => {
+    // Basic address validation
+    const parts = address.split(',').map(part => part.trim());
+    
+    if (parts.length < 2) {
+      return {
+        isValid: false,
+        error: 'Please enter a complete address (e.g., "1234 Main St, City, State")'
+      };
+    }
+
+    // Less strict validation - just ensure we have some numbers and text
+    if (!parts[0].match(/\d+/) || !parts[0].match(/[a-zA-Z]/)) {
+      return {
+        isValid: false,
+        error: 'Please include both a street number and street name'
+      };
+    }
+
+    return { isValid: true };
+  };
+
+  const handleSearch = async (selectedAddress = address) => {
+    console.log('handleSearch called with address:', selectedAddress);
+    
+    if (!selectedAddress.trim()) {
       setError('Please enter a valid address');
+      return;
+    }
+
+    // Validate address format
+    const validation = validateAddress(selectedAddress);
+    if (!validation.isValid) {
+      setError(validation.error);
+      toast.error('Address format needs attention 🏠', {
+        description: validation.error,
+        duration: 4000,
+        className: "bg-white dark:bg-gray-800 shadow-lg text-base font-medium",
+      });
       return;
     }
 
@@ -63,10 +151,15 @@ const PropertyView = () => {
     }, 2000); // Increased to 2 seconds between updates
 
     try {
-      const endpoint = `${API_URL}/property?address=${encodeURIComponent(address)}`;
+      const endpoint = `${API_URL}/property?address=${encodeURIComponent(selectedAddress)}`;
       console.log('Fetching from:', endpoint);
       const response = await fetch(endpoint);
-      if (!response.ok) throw new Error('Failed to fetch property data');
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(errorData || 'Failed to fetch property data');
+      }
+      
       const data = await response.json();
       setPropertyData(data);
       
@@ -93,16 +186,39 @@ const PropertyView = () => {
 
     } catch (err) {
       console.error('Error details:', err);
-      setError('Error fetching property data. Please try again.');
+      let errorMessage = 'Unable to find property information. ';
+      
+      // More user-friendly error messages
+      if (err.message.includes('Failed to fetch')) {
+        errorMessage += 'Please check your internet connection and try again.';
+      } else if (err.message.includes('404')) {
+        errorMessage += 'We couldn\'t find this address in our database.';
+      } else if (err.message.includes('500')) {
+        errorMessage += 'Our property lookup service is having issues. Please try again in a few minutes.';
+      } else if (err.message.includes('invalid address format')) {
+        errorMessage = 'The address format wasn\'t recognized. Please try reformatting it (e.g., "Street Number Street Name, City, State ZIP")';
+      } else if (err.message.includes('address validation failed')) {
+        errorMessage = 'We couldn\'t validate this address. Please check for typos and try again.';
+      } else {
+        errorMessage += 'Please verify the address and try again.';
+      }
+      
+      setError(errorMessage);
       toast.dismiss(toastId);
-      toast.error('Oops! Got chased by a neighborhood dog 🐕', {
-        duration: 3000,
+      toast.error('Oops! Something went wrong 🏠', {
+        description: errorMessage,
+        duration: 5000,
         className: "bg-white dark:bg-gray-800 shadow-lg text-base font-medium",
       });
     } finally {
       setLoading(false);
       clearInterval(progressInterval);
     }
+  };
+
+  const onSearchClick = () => {
+    console.log('Search clicked, address:', address);
+    handleSearch(address);
   };
 
   return (
@@ -132,20 +248,65 @@ const PropertyView = () => {
 
         {/* Search Box */}
         <div className="max-w-3xl mx-auto">
-          <div className="flex gap-3 shadow-lg rounded-lg bg-white p-2">
-            <Input 
-              placeholder="Enter property address..."
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="flex-1 text-lg h-14"
-            />
-            <Button 
-              onClick={handleSearch}
-              disabled={loading}
-              className="px-8 h-14 text-lg bg-black hover:bg-gray-800"
-            >
-              {loading ? 'Searching...' : 'Search'}
-            </Button>
+          <div className="relative">
+            <div className="flex gap-3 shadow-lg rounded-lg bg-white p-2">
+              <Input 
+                ref={inputRef}
+                type="text"
+                name="address"
+                placeholder="Enter property address..."
+                value={address}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                }}
+                onFocus={() => setShowExamples(true)}
+                onBlur={() => {
+                  // Small delay to keep examples visible if there's an error
+                  setTimeout(() => {
+                    if (!error) {
+                      setShowExamples(false);
+                    }
+                  }, 200);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    onSearchClick();
+                  }
+                }}
+                className="flex-1 text-lg h-14"
+              />
+              <button 
+                type="button"
+                onClick={onSearchClick}
+                disabled={loading}
+                className="px-8 h-14 text-lg bg-black hover:bg-gray-800 text-white rounded-md"
+              >
+                {loading ? 'Searching...' : 'Search'}
+              </button>
+            </div>
+            
+            {/* Example Addresses */}
+            {(showExamples || error) && (
+              <div className="absolute w-full mt-2 p-3 bg-white rounded-lg shadow-lg border border-gray-200 space-y-2 z-10">
+                <p className="text-sm font-medium text-gray-600">Example formats:</p>
+                <div className="space-y-1.5">
+                  {exampleAddresses.map((example, index) => (
+                    <div 
+                      key={index}
+                      className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer p-1.5 hover:bg-gray-50 rounded-md transition-colors"
+                      onClick={() => {
+                        setAddress(example);
+                        setShowExamples(false);
+                        setError('');
+                      }}
+                    >
+                      {example}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           
           {error && (

@@ -37,16 +37,22 @@
 - Disqus Comment system integration
 - Social sharing capabilities
 
-- 👉 Install dependencies
+- Install dependencies
 
 ```
 yarn install
 ```
 
-- 👉 Run locally
+- Run locally
 
 ```
 yarn run dev
+```
+
+- Clone the backend repo
+
+```
+git clone https://github.com/ssh-keyz/property-details
 ```
 
 After that, it will open up a preview of the template in your default browser, watch for changes to source files, and live-reload the browser when changes are saved.
