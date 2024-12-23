@@ -7,8 +7,8 @@ import { MapPin, Home, School, DollarSign, Calendar } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
-const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://localhost:8080';
-console.log('Using API URL:', API_URL);
+// Access environment variable from Next.js config
+const API_URL = typeof window !== 'undefined' ? window.ENV?.NEXT_PUBLIC_API_URL || 'http://localhost:8080' : 'http://localhost:8080';
 
 const PropertyView = () => {
   const [address, setAddress] = useState('1600 Amphitheatre Parkway, Mountain View, CA 94043');
@@ -19,7 +19,7 @@ const PropertyView = () => {
   const getLoadingMessage = (progress) => {
     if (progress < 20) return "Scanning the neighborhood... 🏘️";
     if (progress < 40) return "Peeking through windows... 👀";
-    if (progress < 60) return "Hopping fences to find schools... 🏃‍♂️";
+    if (progress < 60) return "Hopping fences... 🏃‍♂️";
     if (progress < 80) return "Counting trees and parks... 🌳";
     if (progress < 100) return "Interviewing local squirrels... 🐿️";
     return "Almost there! Just measuring the sidewalks... 📏";
