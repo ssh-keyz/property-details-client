@@ -7,6 +7,8 @@ import { MapPin, Home, School, DollarSign, Calendar } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const PropertyView = () => {
   const [address, setAddress] = useState('1600 Amphitheatre Parkway, Mountain View, CA 94043');
   const [propertyData, setPropertyData] = useState(null);
@@ -60,7 +62,7 @@ const PropertyView = () => {
     }, 2000); // Increased to 2 seconds between updates
 
     try {
-      const response = await fetch(`http://localhost:8080/property?address=${encodeURIComponent(address)}`);
+      const response = await fetch(`${API_URL}/property?address=${encodeURIComponent(address)}`);
       if (!response.ok) throw new Error('Failed to fetch property data');
       const data = await response.json();
       setPropertyData(data);
