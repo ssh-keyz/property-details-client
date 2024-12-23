@@ -7,6 +7,7 @@ import { defineConfig } from "astro/config";
 import remarkCollapse from "remark-collapse";
 import remarkToc from "remark-toc";
 import config from "./src/config/config.json";
+import * as sass from 'sass';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,6 +15,15 @@ export default defineConfig({
   base: config.site.base_path ? config.site.base_path : "/",
   trailingSlash: config.site.trailing_slash ? "always" : "never",
   image: {},
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          implementation: sass,
+        },
+      },
+    },
+  },
   integrations: [
     react(),
     sitemap(),
