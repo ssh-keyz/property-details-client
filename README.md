@@ -76,13 +76,13 @@ After successfully installing those dependencies, open this template with any ID
 - 👉 Install dependencies
 
 ```
-pnpm install
+yarn install
 ```
 
 - 👉 Run locally
 
 ```
-pnpm run dev
+yarn run dev
 ```
 
 After that, it will open up a preview of the template in your default browser, watch for changes to source files, and live-reload the browser when changes are saved.

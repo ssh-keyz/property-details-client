@@ -1,81 +1,70 @@
 ---
 banner:
-  title: "Scale design & dev operations with Avocode Enterprise"
-  content: "A fully integrated suite of authentication & authoriz products, Stytch’s platform removes the headache of."
-  image: /images/banner-img.png
+  title: "Make informed property decisions with intelligent insights"
+  content: "Transform your property search with comprehensive data on homes and schools, helping you find the perfect location for your family's future."
+  image: "/images/banner-img.png"
   button:
-    label: Download The Theme
-    link: "https://themefisher.com/astro-themes/pinwheel-astro"
+    label: Start Your Search
+    link: "#property-search"
     enable: true
 
 ##key features
 key_features:
-  title: "The Highlighting Part Of Our Solution"
-  description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi egestas Werat viverra id et aliquet. vulputate egestas sollicitudin.
+  title: "Smart Property Intelligence at Your Fingertips"
+  description: "Our advanced property search platform combines location data, property details, and educational insights to help you make confident real estate decisions."
   feature_list:
-    - icon: "map"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Live Caption
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "lock"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Smart Reply
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "link"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Sound Amplifier
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "bell"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Sound Amplifier
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "monitor"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Smart Reply
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "map"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Live Caption
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "link"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Sound Amplifier
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "bell"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Sound Amplifier
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "map"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Smart Reply
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    - icon: "monitor"  #icon package react-feather-icon [https://feathericons.com/]
-      title: Live Caption
-      content: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - icon: "home"
+      title: "Instant Property Details"
+      content: "Access comprehensive property information including size, value, and recent updates in real-time."
+    - icon: "map-pin"
+      title: "Location Intelligence"
+      content: "Get precise location data and neighborhood insights to understand the area better."
+    - icon: "school"
+      title: "School Zone Analysis"
+      content: "Compare nearby schools with detailed ratings and distance information for family-focused decisions."
+    - icon: "trending-up"
+      title: "Value Tracking"
+      content: "Stay informed about property values and market trends in your desired area."
+    - icon: "compass"
+      title: "Distance Mapping"
+      content: "Visualize distances to schools and important amenities for better location planning."
+    - icon: "calendar"
+      title: "Update Tracking"
+      content: "Access the latest property information with timestamps on all data points."
 
-#service
+
 service:
   homepage_tab:
-    title: Prevent failure from to impacting your reputation
-    description: Our platform helps you build secure onboarding authentication experiences that retain and engage your users. We build the infrastructure, you can.
+    title: "Make property decisions with confidence"
+    description: "Our platform combines property data, school information, and location intelligence to help you find the perfect home for your family's needs."
     tab_list:
-        - title: Habit building essential choose habit
+        - title: "Search Any Property"
           icon: "lock"  #icon package react-feather-icon [https://feathericons.com/]
           image: "/images/sells-by-country.png"
-        - title: Get an overview of Habit Calendars.
+        - title: "Compare School Districts"
           icon: "clock"  #icon package react-feather-icon [https://feathericons.com/]
           image: "/images/collaboration.png"
-        - title: Start building with Habitify platform
+        - title: "Track Property Values"
           icon: "bell"  #icon package react-feather-icon [https://feathericons.com/]
           image: "/images/sells-by-country.png"
 
   our_service:
-    - title: Accept payments any country in this whole universe
-      desctiption: Donec sollicitudin molestie malesda. Donec sollitudin molestie malesuada. Mauris pellentesque nec, egestas non nisi. Cras ultricies ligula sed
+    - title: "Complete property insights for informed decisions"
+      description: "Access comprehensive property data, school information, and neighborhood insights all in one place. Make confident decisions about your next home or investment."
       image: "/images/collaboration.png"
       list:
-        - Supporting more than 119 country world
-        - Open transaction with more than currencies
-        - Customer Service with 79 languages
-    - title: Accountability that works for you
-      description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi egestas Werat viverra id et aliquet. vulputate egestas sollicitudin.
+        - "Real-time property value updates"
+        - "Detailed school zone analysis"
+        - "Precise location mapping"
+        - "Comprehensive neighborhood data"
+    - title: "School-focused property search"
+      description: "Find properties in the best school districts for your family. Compare school ratings, distance, and property details to make the perfect choice."
       video:
         thumbnail: "/images/intro-thumbnail.png"
-        video_id: "g3-VxLQO7do"
+        video_id: "property-demo-video"
       button:
-        label: Know About Us
-        link: "#"
+        label: "Learn More"
+        link: "#learn-more"
         enable: true
 
 #testimonial

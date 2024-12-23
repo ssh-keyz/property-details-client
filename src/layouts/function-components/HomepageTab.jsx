@@ -26,7 +26,8 @@ const HomepageTab = ({ homepage_tab: { tab_list, title, description } }) => {
           <p className="mt-4">{description}</p>
           <ul className="tab-nav mt-8 border-b-0">
             {tab_list.map((item, index) => {
-              const FeatherIcon = Icon[humanize(item.icon)];
+              const iconName = humanize(item.icon);
+              const IconComponent = typeof Icon[iconName] === 'function' ? Icon[iconName] : Icon.HelpCircle;
               return (
                 <li
                   key={index}
@@ -34,11 +35,9 @@ const HomepageTab = ({ homepage_tab: { tab_list, title, description } }) => {
                     tab === index ? "active" : undefined
                   }`}
                   onClick={() => setTab(index)}
-                  
                 >
                   <span className="tab-icon mr-3">
-                    {" "}
-                    <FeatherIcon />
+                    <IconComponent size={20} />
                   </span>
                   {item.title}
                 </li>
