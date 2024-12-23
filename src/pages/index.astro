@@ -8,12 +8,14 @@ import Service from "@/layouts/components/Service.astro";
 import Cta from "@/layouts/partials/Cta.astro";
 import PropertyView from "../components/PropertyView.jsx";
 import { getEntry } from "astro:content";
+import  SpeedInsights  from "@vercel/speed-insights/astro"
 
 const homepage = await getEntry("homepage", "index");
 const { banner, key_features, service, testimonial } = homepage.data;
 ---
 
 <Base>
+  <SpeedInsights/>
   <!-- banner -->
   <!-- <Banner banner={banner} /> -->
   <PropertyView client:load />
